@@ -2,21 +2,15 @@
 
 ## Runtime
 
-The helper requires Python 3.10+ and Pillow 10–12. `uv run scripts/render.py ...`
-reads the script's dependency metadata and installs Pillow into an isolated cache.
-The generated animation itself has no dependencies and makes no API calls.
-
-Without uv, create a local environment and install `scripts/requirements.txt`:
+The helper requires Node.js 22.20+ and Sharp for image decoding. Install inside the
+skill directory once. The browser builder uses native image decoding and the same
+JavaScript generator. The generated animation makes no API calls and needs only a browser.
 
 ```sh
-python -m venv .render-venv
-# macOS/Linux:
-.render-venv/bin/python -m pip install -r /path/to/render/scripts/requirements.txt
-# Windows:
-.render-venv/Scripts/python.exe -m pip install -r C:/path/to/render/scripts/requirements.txt
+npm install --prefix /path/to/render --omit=dev --workspaces=false
 ```
 
-Use that environment's Python to run the helper. Paths with spaces must be quoted.
+Run `node /path/to/render/scripts/render.mjs ...` from any directory. Quote paths with spaces.
 
 ## Input
 
@@ -26,13 +20,13 @@ export padding. Layer order is front-to-back, or top-to-bottom for a burger.
 Use filenames such as `01-top-bun.png` through `06-bottom-bun.png`.
 
 ```sh
-python /path/to/render/scripts/render.py --input ./layers --output ./animation --product "Burger"
+node /path/to/render/scripts/render.mjs --input ./layers --output ./animation --product "Burger"
 ```
 
 If files are spread across upload directories or the user specifies their order:
 
 ```sh
-python /path/to/render/scripts/render.py --images /uploads/a.png /uploads/b.png /uploads/c.png /uploads/d.png --labels "Top bun" "Tomato" "Patty" "Bottom bun" --output ./animation --product "Burger"
+node /path/to/render/scripts/render.mjs --images /uploads/a.png /uploads/b.png /uploads/c.png /uploads/d.png --labels "Top bun" "Tomato" "Patty" "Bottom bun" --output ./animation --product "Burger"
 ```
 
 Output must be a **new** directory. No overwrite option is provided. Keep original
@@ -70,9 +64,9 @@ There is intentionally no hover trigger in this helper.
 
 | File | Use |
 | --- | --- |
-| `index.html` | Portable scroll animation with all images and JavaScript embedded. Open directly from disk or serve it. |
+| `index.html` | Portable scroll animation with all images, CSS and JavaScript embedded. Open directly from disk or serve it. |
 | `embed.html` | A script tag and custom element with inline scene data. Paste into a website. |
-| `explode.js`, `layers/` | Assets for the website embed. |
+| `explode.js`, `explode.css`, `layers/` | Assets for the website embed. Keep CSS beside the script. |
 | `scene.json` | Editable configuration for a hosted `src` embed. |
 | `manifest.json` | Motion choice, reason, warnings, anchors and source checksums. |
 | `render.zip` | Everything above, with engine license/attribution and viewing instructions. |
@@ -86,7 +80,7 @@ with `src` or rebuild the snapshot; the snapshot does not fetch that JSON file.
 
 ## Website integration
 
-Copy `explode.js`, `layers/`, `LICENSE`, and `NOTICE` to a public asset folder such
+Copy `explode.js`, `explode.css`, `layers/`, `LICENSE`, and `NOTICE` to a public asset folder such
 as `/product-animation/`. Set the script URL in `embed.html` to
 `/product-animation/explode.js` and its JSON `base` to `/product-animation/layers/`.
 Paste that snippet in the desired page section. Use this custom element as-is in
@@ -103,6 +97,9 @@ the **embedding page URL** (not relative to the JSON file), and use:
 Keep ancestor containers from trapping `position: sticky` with unintended overflow.
 Layer files should be same-origin or CORS-enabled if pointer highlighting is needed.
 The portable file does not need pointer highlighting to open/close with scrolling.
+The engine loads `explode.css` into its Shadow DOM, relative to the engine script's URL.
+For a stylesheet hosted elsewhere, set `data-render-css="https://your-host/path/explode.css"`
+on the engine's script tag. Portable HTML uses an embedded data URL instead.
 
 Test an assembled view near progress 0, a separated view near .55, and reassembly
 near 1. The component respects reduced motion and supports keyboard selection.

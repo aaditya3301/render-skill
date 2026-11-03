@@ -79,17 +79,18 @@ If canvases differ, it asks for registered exports rather than guessing lost off
 
 ## Build without an agent
 
-The helper needs **Python 3.10+ and Pillow**. With [uv](https://docs.astral.sh/uv/), run:
+The application is JavaScript and CSS. The command-line helper needs **Node.js 22.20+**. Run:
 
 ```sh
 git clone https://github.com/aaditya3301/render-skill.git
 cd render-skill
-uv run skills/render/scripts/render.py --input ./your-layers --output ./animation --product "Burger"
+npm install
+node skills/render/scripts/render.mjs --input ./your-layers --output ./animation --product "Burger"
 ```
 
-Without uv, install `skills/render/scripts/requirements.txt` into a local Python
-environment and run the same script with its Python. The generated animation needs
-neither Python nor Node to play. `--output` must be a new directory.
+The generated animation needs only a browser to play. `--output` must be a new directory.
+The installed skill includes its own package.json; install its decoder with
+`npm install --prefix /path/to/installed/render --omit=dev --workspaces=false`.
 
 For attachment paths and explicit ordering, use `--images file1.png file2.png ...`.
 All options and integration details are in [the usage reference](skills/render/references/usage.md).
@@ -98,14 +99,14 @@ All options and integration details are in [the usage reference](skills/render/r
 
 | Output | Purpose |
 | --- | --- |
-| `index.html` | Portable animation: images and engine embedded, opens directly from disk. |
+| `index.html` | Portable animation: images, CSS and engine embedded, opens directly from disk. |
 | `embed.html` | Copyable website embed. |
-| `explode.js` and `layers/` | Assets to host alongside the embed. |
+| `explode.js`, `explode.css` and `layers/` | Assets to host alongside the embed. |
 | `scene.json` | Editable configuration for a hosted animation. |
 | `manifest.json` | Selected motion, its reason, input checksums and any warnings. |
 | `render.zip` | Ready-to-share animation package, including license notices. |
 
-For a website, copy the script and layers to public assets and paste `embed.html`,
+For a website, copy the script, CSS and layers to public assets and paste `embed.html`,
 adjusting the script URL and scene `base`. See the [integration instructions](skills/render/references/usage.md#website-integration).
 
 ## Try schematic examples
@@ -113,29 +114,41 @@ adjusting the script URL and scene `base`. See the [integration instructions](sk
 The example generator creates original, simple phone and burger layer sets:
 
 ```sh
-uv run --with Pillow python examples/make_layers.py --output output/demo-layers
-uv run skills/render/scripts/render.py --input output/demo-layers/burger --output output/burger --product "Burger"
-uv run skills/render/scripts/render.py --input output/demo-layers/phone --output output/phone --product "Phone"
+node examples/make-layers.mjs --output output/demo-layers
+node skills/render/scripts/render.mjs --input output/demo-layers/burger --output output/burger --product "Burger"
+node skills/render/scripts/render.mjs --input output/demo-layers/phone --output output/phone --product "Phone"
 ```
 
 Open either output's `index.html` in a browser and scroll. These are schematic test
 illustrations; no third-party burger photography is bundled into the skill.
 
+## Architecture
+
+- `skills/render/lib/generator.mjs`: shared image analysis, motion selection, scene settings, portable HTML, embed, and ZIP generation.
+- `skills/render/lib/node.mjs`: filesystem and Sharp image-decoding adapter.
+- `skills/render/lib/browser.mjs`: native browser image-decoding adapter.
+- `skills/render/scripts/render.mjs`: command-line entry point for the skill.
+- `skills/render/assets/explode.js` and `explode.css`: browser animation and styling. The engine loads its CSS into its Shadow DOM.
+
+Original image bytes are preserved. The command-line decoder has a native dependency
+(Sharp); it is not shipped to viewers. The browser adapter requires no image library.
+
 ## Development
 
 ```sh
-python -m pip install -r requirements-dev.txt
-python -m unittest discover -s tests -v
-python -m playwright install chromium
-python tests/browser_smoke.py
-python tests/install_smoke.py
+npm ci
+npm test
+npx playwright install chromium
+npm run test:browser
+npm run test:motion
+npm run test:install
 node --check skills/render/assets/explode.js
 ```
 
 The browser test builds new outputs, extracts their ZIPs and verifies scroll-only
 opening/reassembly, portable offline HTML, a hosted embed, keyboard selection, mobile
 layout and reduced motion. It uses Playwright Chromium or an executable specified
-with `CHROME_PATH`. CI runs build tests on Windows and Linux and browser tests on Linux.
+with `CHROME_PATH`. CI runs Node.js 22/24 build tests on Windows and Linux and browser tests on Linux.
 
 ## License and attribution
 

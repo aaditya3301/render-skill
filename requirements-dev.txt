@@ -1,3 +1,0 @@
--r skills/render/scripts/requirements.txt
-playwright>=1.45,<2
-PyYAML>=6,<7

@@ -1,0 +1,20 @@
+{
+  "name": "render-skill-dev",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.20" },
+  "workspaces": ["skills/render"],
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:browser": "node tests/browser-smoke.mjs",
+    "test:motion": "node tests/motion-smoke.mjs",
+    "test:install": "node tests/install-smoke.mjs",
+    "examples": "node examples/make-layers.mjs --output output/demo-layers",
+    "serve": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.0",
+    "gifenc": "^1.0.3"
+  }
+}

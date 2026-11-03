@@ -23,16 +23,15 @@ changes the direction, not the trigger.
    it is known. Straight-on device layers normally use `--input-mode tilt`; parts already
    drawn or photographed in perspective use `--input-mode iso`. Burgers and similar
    food stacks use a fixed camera and vertical motion. An explicit user choice wins.
-3. Run `scripts/render.py` **relative to this skill's directory**, not the user's project.
-   The helper needs Python 3.10+ and Pillow. If `uv` is available, it resolves the script's
-   declared dependencies in an isolated environment:
+3. Run `scripts/render.mjs` **relative to this skill's directory**, not the user's project.
+   The helper needs Node.js 22.20+ and its local image decoder. Install the dependencies
+   in the skill directory once, then run the helper from any working directory:
 
    ```sh
-   uv run /path/to/render/scripts/render.py --input /path/to/layers --output /path/to/new-animation --product "Burger"
+   npm install --prefix /path/to/render --omit=dev --workspaces=false
+   node /path/to/render/scripts/render.mjs --input /path/to/layers --output /path/to/new-animation --product "Burger"
    ```
 
-   Otherwise use a suitable existing Python environment, or create a project-local venv
-   and install `scripts/requirements.txt` into it. Do not assume Pillow is installed.
    For attachments in separate directories, pass `--images file1.png file2.png ...`
    instead of `--input`. Explicit `--images` order is preserved; directory inputs are
    sorted naturally by filename. For options and website integration, read
@@ -44,8 +43,8 @@ changes the direction, not the trigger.
    Do not describe its local motion heuristic as an AI vision service.
 5. Check the generated result using the host's browser or preview tools when available.
    Verify assembly at the start/end, separation near the middle, and the mobile layout.
-   Hovering must not open the product. The output `index.html` embeds its images and
-   engine, so it also works when opened directly from disk. Report any verification you
+   Hovering must not open the product. The output `index.html` embeds its images,
+   engine and CSS, so it also works when opened directly from disk. Report any verification you
    could not perform without presenting it as tested.
 6. Return links to `index.html`, `embed.html`, and `render.zip`, plus the selected direction.
    This produces one animation from the layer set, not a separate animation per image.
@@ -61,7 +60,8 @@ changes the direction, not the trigger.
   its reduced-motion handling, keyboard navigation, responsive fit, spring continuity,
   `assets/LICENSE`, and `assets/NOTICE`.
 - For an existing website, integrate the generated embed into the requested section and
-  copy its script and layers into the appropriate public asset directory. Adjust the
+  copy `explode.js`, `explode.css`, and its layers into the appropriate public asset directory.
+  Keep the CSS beside the engine script. Adjust the
   relative URLs and check that ancestor overflow does not break sticky positioning.
   Preserve the surrounding site design unless the user asks for a redesign.
 - Work locally. Generating an animation does not authorize uploading the user's images,

@@ -1,0 +1,10 @@
+{
+  "name": "@aaditya3301/render-skill",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Build scroll-driven product animations from transparent image layers.",
+  "license": "MIT",
+  "engines": { "node": ">=22.20" },
+  "dependencies": { "sharp": "^0.35.5" }
+}

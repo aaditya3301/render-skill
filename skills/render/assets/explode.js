@@ -95,59 +95,8 @@
     return [A, c * h - b * i, b * f - c * e, B, a * i - c * g, c * d - a * f, C, b * g - a * h, a * e - b * d].map((v) => v / det);
   };
 
-  const CSS = `
-  :host { display: block; position: relative; height: var(--length, auto); color: var(--ink);
-    --paper: #0b0b0c; --ink: #e8e6e1; --hi: #fff; --muted: #8b8984; --line: #2a2a2c; --accent: #ff6a1a; --chip: rgba(11,11,12,.86);
-    --dim-b: .42; --dim-s: .6; --dim-o: 1; --edge-b: .3; --halo: 0,0,0; --halo-o: .9;
-    --ease: cubic-bezier(.32,.72,0,1); font: 13px/1.4 ui-sans-serif, system-ui, sans-serif; }
-  :host([data-theme="light"]) { --paper: #f3f1ec; --ink: #1b1b19; --hi: #000; --muted: #6c6a65; --line: #d8d5cd; --chip: rgba(243,241,236,.92);
-    --dim-b: .9; --dim-s: .25; --dim-o: .36; --edge-b: .55; --halo-o: .16; }
-  .sticky { display: grid; justify-items: center; align-content: center; gap: 14px; }
-  :host([data-trigger="scroll"]) .sticky { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-  :host([data-trigger="hover"]) .sticky { padding: 24px 0; }
-  .card { position: relative; width: min(1180px, 94vw); height: min(760px, 86vh); margin: 0;
-    background: var(--paper); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
-  :host([data-trigger="hover"]) .card { height: min(720px, 80vh); }
-  .caption { margin: 0; max-width: min(1180px, 94vw); color: var(--muted); text-align: center; font-size: 12px; }
-  .corner { position: absolute; z-index: 3; color: var(--muted); letter-spacing: .02em; pointer-events: none; }
-  .tl { top: 16px; left: 20px; } .tr { top: 16px; right: 20px; color: var(--ink); }
-  .bl { bottom: 16px; left: 20px; } .br { bottom: 16px; right: 20px; font-variant-numeric: tabular-nums; color: var(--ink); }
-  .stage { position: absolute; inset: 0; outline: none; touch-action: pan-y; }
-  .stage:focus-visible { outline: 1px solid var(--muted); outline-offset: -8px; border-radius: 12px; }
-  .scene { position: absolute; left: 50%; top: 50%; width: var(--bw); height: var(--bh);
-    margin: calc(var(--bh) / -2) 0 0 calc(var(--bw) / -2); perspective: ${PERSP}px; perspective-origin: 50% 45%; }
-  :host([data-mode="iso"]) .scene { perspective: none; }
-  .rig, .layer { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
-  :host([data-mode="iso"]) .rig, :host([data-mode="iso"]) .layer { transform-style: flat; }
-  .layer img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain;
-    user-select: none; -webkit-user-drag: none; pointer-events: none; transition: filter 240ms var(--ease), opacity 240ms var(--ease); }
-  .layer img.edge { filter: brightness(var(--edge-b)); opacity: var(--edge, 1); transition: filter 240ms var(--ease); }
-  .rig[data-flat] img.edge { display: none; }
-  .stage[data-focus] .layer:not([data-on]) img.face { filter: brightness(var(--dim-b)) saturate(var(--dim-s)); opacity: var(--dim-o); }
-  .stage[data-focus] .layer:not([data-on]) img.edge { filter: brightness(calc(var(--edge-b) * .5)); }
-  .halo { position: absolute; left: 50%; top: 50%; width: calc(var(--bw) * .9); height: 60px;
-    margin-left: calc(var(--bw) * -.45); margin-top: var(--hy, calc(var(--bh) * .43)); border-radius: 50%;
-    background: rgb(var(--halo)); filter: blur(22px); opacity: var(--halo-o); transform-origin: 50% 50%; will-change: transform; }
-  svg.leaders { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
-  svg.leaders line { stroke: var(--muted); stroke-width: 1; }
-  svg.leaders circle { fill: var(--ink); }
-  svg.leaders g[data-on] line { stroke: var(--accent); } svg.leaders g[data-on] circle { fill: var(--accent); }
-  .label { position: absolute; left: 0; top: 0; white-space: nowrap; transform: translate(-50%, -50%);
-    padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--chip);
-    font-size: 12px; letter-spacing: .02em; cursor: default; }
-  .label b { color: var(--muted); font-weight: 500; margin-right: 6px; font-variant-numeric: tabular-nums; }
-  .label[data-on] { border-color: var(--accent); color: var(--hi); }
-  .legend { position: absolute; z-index: 3; left: 50%; bottom: 46px; transform: translateX(-50%);
-    display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; flex-wrap: wrap; justify-content: center; width: 92%; }
-  .legend button { all: unset; cursor: pointer; padding: 4px 10px; border-radius: 999px; color: var(--muted);
-    border: 1px solid transparent; transition: color 160ms var(--ease), border-color 160ms var(--ease); }
-  .legend button b { font-weight: 500; margin-right: 6px; font-variant-numeric: tabular-nums; }
-  .legend button:hover, .legend button[data-on], .legend button:focus-visible { color: var(--ink); border-color: var(--line); }
-  .legend button[data-on] b { color: var(--accent); }
-  @media (max-width: 720px) { .bl { display: none; } }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  @media (prefers-reduced-motion: reduce) { .layer img, .legend button { transition: none; } }
-  `;
+  // Capture the script URL while evaluating; portable exports provide a data: stylesheet.
+  const STYLE_URL = document.currentScript?.getAttribute('data-render-css') || new URL('explode.css', document.currentScript?.src || document.baseURI).href;
 
   class ExplodedView extends HTMLElement {
     static suggestMotion(scene) { return suggestMotion(scene); }
@@ -220,7 +169,7 @@
       const gap = S.gap ?? 300;
       const axis = S.axis || [-0.53, -0.35];
       this.order = Array.isArray(S.order) ? S.order : [...Array(n).keys()];
-      this.root.innerHTML = `<style>${CSS}</style>
+      this.root.innerHTML = `<link rel="stylesheet" href="${esc(STYLE_URL)}">
         <div class="sticky"><figure class="card">
           <span class="corner tl">${esc(S.fig || "Fig 1")}</span>
           <span class="corner tr">${esc(S.product)}</span>
@@ -236,6 +185,9 @@
           <div class="sr" aria-live="polite"></div>
         </figure>${S.caption ? `<p class="caption">${esc(S.caption)}</p>` : ""}</div>`;
       const $ = (sel) => this.root.querySelector(sel);
+      this.cssReady = false;
+      $('link[rel="stylesheet"]').addEventListener('load', () => { this.cssReady = true; this.measure(); this.run(); });
+      $('link[rel="stylesheet"]').addEventListener('error', () => console.error('<exploded-view>: could not load explode.css'));
       this.sticky = $(".sticky"); this.card = $(".card"); this.stage = $(".stage"); this.sceneEl = $(".scene");
       this.rig = $(".rig"); this.halo = $(".halo"); this.svg = $("svg.leaders"); this.readout = $(".br");
       this.hint = $(".bl"); this.live = $(".sr");
