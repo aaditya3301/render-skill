@@ -1,0 +1,4 @@
+interface:
+  display_name: "Render"
+  short_description: "Turn product layers into scroll animations"
+  default_prompt: "Use $render to build a scroll animation from these product layer images."

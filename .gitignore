@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+.render-venv/
+.pytest_cache/
+.DS_Store
+Thumbs.db
+output/
+test-output/
+node_modules/
+.agents/
+skills-lock.json
