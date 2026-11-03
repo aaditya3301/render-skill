@@ -9,6 +9,18 @@ stacks lift vertically. Opening and closing follow scrolling, never hover or an 
 The output includes a standalone HTML animation, a website embed and a ZIP. No WebGL,
 paid API, account or API key is needed to build or view it.
 
+## Burger example
+
+![Six burger ingredients separate vertically and reassemble in Render's scroll animation.](docs/examples/burger/animation.gif)
+
+Actual output from the bundled Render engine, recorded while scrolling: six PNG
+layers lift apart, pause for inspection, then assemble again. The skill selected
+vertical motion with a fixed camera and generated the page used for this recording.
+
+[Source artwork, scene settings and reproduction steps](docs/examples/burger/README.md).
+Burger imagery by [smford](https://github.com/smford/hamburger-decomp), licensed
+[AGPL-3.0](docs/examples/burger/ARTWORK-LICENSE).
+
 ## Install
 
 From your project, run:
@@ -127,9 +139,14 @@ with `CHROME_PATH`. CI runs build tests on Windows and Linux and browser tests o
 
 ## License and attribution
 
-Render is [MIT licensed](LICENSE), copyright aaditya3301. Motion behavior was inspired
+Render's skill and engine are [MIT licensed](LICENSE), copyright aaditya3301.
+Motion behavior was inspired
 by [anatomy](https://github.com/wheresryan22/anatomy); its MIT attribution is retained
 in the bundled [NOTICE](skills/render/assets/NOTICE).
+
+The burger showcase GIF and its source cutouts in `docs/examples/burger/` use the
+separate [AGPL-3.0 artwork license](docs/examples/burger/ARTWORK-LICENSE). They are
+documentation assets and are not included in the installed skill.
 
 Your input artwork keeps its own license. Adjacent license/attribution files are
 preserved in the generated `artwork/` folder; use `--artwork-license` and

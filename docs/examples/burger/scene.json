@@ -1,0 +1,74 @@
+{
+  "product": "Burger",
+  "fig": "Layers",
+  "mode": "iso",
+  "motion": "vertical",
+  "trigger": "scroll",
+  "base": "layers/",
+  "canvas": [
+    1800,
+    1500
+  ],
+  "gap": 220,
+  "hint": "Scroll to take it apart",
+  "layers": [
+    {
+      "file": "01-top-bun.png",
+      "label": "Top bun",
+      "anchor": [
+        897,
+        465
+      ]
+    },
+    {
+      "file": "02-sauce.png",
+      "label": "Sauce",
+      "anchor": [
+        891,
+        531
+      ]
+    },
+    {
+      "file": "03-tomato.png",
+      "label": "Tomato",
+      "anchor": [
+        903,
+        723
+      ]
+    },
+    {
+      "file": "04-lettuce.png",
+      "label": "Lettuce",
+      "anchor": [
+        915,
+        807
+      ]
+    },
+    {
+      "file": "05-patty.png",
+      "label": "Patty",
+      "anchor": [
+        891,
+        975
+      ]
+    },
+    {
+      "file": "06-bottom-bun.png",
+      "label": "Bottom bun",
+      "anchor": [
+        927,
+        1131
+      ]
+    }
+  ],
+  "axis": [
+    0,
+    -1
+  ],
+  "bounds": [
+    79,
+    177,
+    1723,
+    1373
+  ]
+}
